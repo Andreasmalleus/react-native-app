@@ -1,20 +1,48 @@
 import React from "react";
-import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight} from "react-native";
+import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight, Alert} from "react-native";
+import firebaseApplication from "../components/firebaseConfig.js";
 
 class SignupPage extends React.Component{
   constructor(props){
     super(props);
     this.state ={
-        username : "",
         email : "",
         password : "",
         confirmationPassword : ""
     }
   }
     
-  onSignupPress = () => {
-      alert(this.state.username);
+  handleSignUp = () => {
+    this.signUp();
   }
+
+  signUp  = async() => {
+      if(this.state.password == this.state.confirmationPassword){
+        if(this.state.email != "" && this.state.password != "" && this.state.confirmationPassword != ""){
+          try{
+            await firebaseApplication.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+            console.log(this.state.email + " signed up");
+            this.props.navigation.navigate("SignUp");
+          }catch(err){
+            console.log(err);
+            Alert.alert(err.toString());
+          }
+        }else{
+          Alert.alert(
+            "Fields arent quite right",
+            "Press OK to cancel...",
+            [
+              {text: "OK", onPress: () => console.log("OK has been pressed")}
+            ],
+            {cancelable : true}
+          );
+        }
+      }else{
+        Alert.alert("Passwords do not match");
+      }
+  }
+
+
 
     render() {
         const {navigate} = this.props.navigation;
@@ -25,14 +53,13 @@ class SignupPage extends React.Component{
             <View style={styles.signupScreenContainer}>
               <View style={styles.signupFormView}>
               <Text style={styles.logoText}>Adieu</Text>
-                <TextInput placeholder="Username" placeholderColor="#c4c3cb" style={styles.signupFormTextInput} onChangeText={(text) => this.setState({username : text})} value={this.state.username}/>
                 <TextInput placeholder="Email" placeholderColor="#c4c3cb" style={styles.signupFormTextInput} onChangeText={(text) => this.setState({email : text})} value={this.state.email}/>
                 <TextInput placeholder="Password" placeholderColor="#c4c3cb" style={styles.signupFormTextInput} secureTextEntry={true} onChangeText={(text) => this.setState({password : text})} value={this.state.password}/>
                 <TextInput placeholder="Confirm password" placeholderColor="#c4c3cb" style={styles.signupFormTextInput} secureTextEntry={true} onChangeText={(text) => this.setState({confirmationPassword : text})} value={this.state.confirmationPassword}/>
                 <TouchableHighlight style={styles.signupButton}>
                 <Button
                     title="Create account"
-                    onPress={() => this.onSignupPress()}
+                    onPress={() => this.handleSignUp()}
                 />
                 </TouchableHighlight>
                 <TouchableHighlight onPress={() => navigate('Login')}>

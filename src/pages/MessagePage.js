@@ -52,8 +52,4 @@ class MessagePage extends React.Component{
     }
 }
 
-const styles = StyleSheet.create({
-
-})
-
 export default MessagePage;

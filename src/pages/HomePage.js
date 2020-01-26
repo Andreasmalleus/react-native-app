@@ -25,15 +25,6 @@ class HomePage extends React.Component{
           fontWeight= "bold"
         />
       ),
-      headerLeft : () => (
-        <Button
-          onPress={() => navigation.navigate('Login')}
-          title="Login"
-          color="#fff"
-          fontWeight= "bold"
-        />
-      ),
-
     });
 
 

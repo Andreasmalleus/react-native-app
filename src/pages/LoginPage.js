@@ -1,19 +1,40 @@
 import React from "react";
-import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight} from "react-native";
+import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight, Alert} from "react-native";
+import firebaseApplication from "../components/firebaseConfig.js";
 
 class LoginPage extends React.Component{
   constructor(props){
     super(props);
     this.state ={
-        username : "",
+        email : "",
         password : ""
     }
   }
 
-    onLoginPress  = () => {
-        alert("logged in");
+    handleLogin  = () => {
+        this.login(); 
     }
 
+    login = async() => {
+      if(this.state.email != "" && this.state.password != ""){
+        try{
+            await firebaseApplication.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
+            console.log(this.state.email + " just logged in");
+            this.props.navigation.navigate("Home");
+        }catch(err){
+          console.log(err.toString());
+        }
+      }else{
+        Alert.alert(
+          "Fields arent quite right",
+          "Press OK to cancel...",
+          [
+            {text: "OK", onPress: () => console.log("OK has been pressed")}
+          ],
+          {cancelable : true}
+        );
+      }
+    }
     
 
     render() {
@@ -25,15 +46,15 @@ class LoginPage extends React.Component{
             <View style={styles.loginScreenContainer}>
               <View style={styles.loginFormView}>
               <Text style={styles.logoText}>Adieu</Text>
-                <TextInput placeholder="Username" placeholderColor="#c4c3cb" style={styles.loginFormTextInput} onChangeText={(text) => this.setState({username : text})} value={this.state.username}/>
+                <TextInput placeholder="Email" placeholderColor="#c4c3cb" style={styles.loginFormTextInput} onChangeText={(text) => this.setState({email : text})} value={this.state.email}/>
                 <TextInput placeholder="Password" placeholderColor="#c4c3cb" style={styles.loginFormTextInput} secureTextEntry={true} onChangeText={(text) => this.setState({password : text})} value={this.state.password}/>
                 <TouchableHighlight style={styles.loginButton}>
                 <Button
                     title="Login"
-                    onPress={() => this.onLoginPress()}
+                    onPress={() => this.handleLogin()}
                 />
                 </TouchableHighlight>
-                <TouchableHighlight onPress={() => navigate('Signup')}>
+                <TouchableHighlight onPress={() => navigate('SignUp')}>
                     <Text style={styles.singupText}>Dont have an account ? Sign up now !</Text>
                 </TouchableHighlight>
               </View>

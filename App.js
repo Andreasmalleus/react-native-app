@@ -12,9 +12,9 @@ const AppNavigator = createStackNavigator({
   Message : {screen : MessagePage},
   Settings : {screen : SettingsPage},
   Login : {screen : LoginPage},
-  Signup : {screen : SignupPage},
+  SignUp : {screen : SignupPage},
 },{
-  initialRouteName: 'Home',
+  initialRouteName: 'Login',
   defaultNavigationOptions: {
          headerStyle: {
              backgroundColor: '#292929',
