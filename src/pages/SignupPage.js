@@ -1,6 +1,7 @@
 import React from "react";
 import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight, Alert} from "react-native";
 import firebaseApplication from "../components/firebaseConfig.js";
+import {API_KEY} from "react-native-dotenv";
 
 class SignupPage extends React.Component{
   constructor(props){
@@ -14,6 +15,8 @@ class SignupPage extends React.Component{
     
   handleSignUp = () => {
     this.signUp();
+    Alert.alert(API_KEY);
+
   }
 
   signUp  = async() => {
@@ -22,7 +25,7 @@ class SignupPage extends React.Component{
           try{
             await firebaseApplication.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
             console.log(this.state.email + " signed up");
-            this.props.navigation.navigate("SignUp");
+            this.props.navigation.navigate("Login");
           }catch(err){
             console.log(err);
             Alert.alert(err.toString());

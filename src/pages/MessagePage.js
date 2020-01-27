@@ -1,12 +1,19 @@
-import React from "react";
-import {StyleSheet} from "react-native";
+import React, { Children } from "react";
+import {StyleSheet, Alert} from "react-native";
 import {GiftedChat} from "react-native-gifted-chat";
+import firebaseApplication from "../components/firebaseConfig.js";
+import { cos } from "react-native-reanimated";
 class MessagePage extends React.Component{
-    state= {
-        messages : [],
-        user : [
-            
-        ]
+    constructor(props){
+        super(props);
+        const firebaseDB = firebaseApplication.database();
+        this.messageRef = firebaseDB.ref('messages');
+        this.state = {
+            messages : [],
+            user : [
+                
+            ]
+        }
     }
     static navigationOptions = ({ navigation }) => {
 
@@ -14,38 +21,62 @@ class MessagePage extends React.Component{
           title: navigation.getParam('author'),
           
         };
-      };
+    };
 
     componentDidMount(){
         this.setState({
-            messages: [
-                {
-                     _id : 1,
-                    text: this.props.navigation.getParam('message'),
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'React Native',
-                        avatar: 'https://placeimg.com/140/140/any',
-                        },
-                    }
-                ]
-            })
+            user : firebaseApplication.auth().currentUser
+        })
+        this.listenForMessages()
     }
 
-    onSend = (messages = [])=>{
-        this.setState(previousState => ({
-            messages : GiftedChat.append(previousState.messages, messages)
-        }))
+    listenForMessages = () =>{
+        this.messageRef.on('value', (snapshot) => {
+            //snapshot returns all of the messages
+            let messageList = [];
+            snapshot.forEach((message) =>{
+                messageList = [
+                    ({
+                        _id : message.key,
+                        text : message.val().text,
+                        createdAt : message.val().createdAt,
+                        user : {
+                            _id : message.val().user._id,
+                            name : message.val().user.name
+                        }
+                    }), ...messageList
+                ];
+                
+            })
+            this.setState({
+                messages : messageList
+            })
+        },
+        (errorObject) =>{
+            console.log("The read has failed" + errorObject);
+        });
+    }
+
+    addMessages = (messages) =>{
+
+        this.messageRef.push({
+            text : messages[0].text,
+            createdAt : Date.now(),
+            user : {
+                _id : messages[0].user._id,
+                name : messages[0].user.name
+            }
+        })
     }
 
     render(){
         return(
             <GiftedChat
             messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
+            onSend={this.addMessages.bind(this)}
             user={{
-              _id: 1,
+              _id: this.state.user.uid,
+              name : this.state.user.email
             }}
           />
         )

@@ -25,6 +25,9 @@ class HomePage extends React.Component{
           fontWeight= "bold"
         />
       ),
+      headerLeft: () => (
+          null
+        ),
     });
 
 
