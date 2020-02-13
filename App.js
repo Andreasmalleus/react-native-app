@@ -2,17 +2,19 @@
 import {createAppContainer} from "react-navigation";
 import {createStackNavigator} from 'react-navigation-stack';
 import HomePage from "./src/pages/HomePage.js";
-import MessagePage from "./src/pages/MessagePage.js";
+import RoomPage from "./src/pages/RoomPage.js";
 import SettingsPage from "./src/pages/SettingsPage.js";
 import LoginPage from "./src/pages/LoginPage.js";
 import SignupPage from "./src/pages/SignupPage.js";
+import RoomCreationPage from "./src/pages/RoomCreationPage.js";
 
 const AppNavigator = createStackNavigator({
   Home : {screen : HomePage},
-  Message : {screen : MessagePage},
+  Room : {screen : RoomPage},
   Settings : {screen : SettingsPage},
   Login : {screen : LoginPage},
   SignUp : {screen : SignupPage},
+  CreateRoom : {screen : RoomCreationPage} 
 },{
   initialRouteName: 'Login',
   defaultNavigationOptions: {

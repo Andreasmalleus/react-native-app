@@ -1,11 +1,14 @@
 import React from "react";
 import {Text, View, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, Button, Keyboard ,TouchableHighlight, Alert} from "react-native";
 import firebaseApplication from "../components/firebaseConfig.js";
-import {API_KEY} from "react-native-dotenv";
+import * as bcrypt from "react-native-bcrypt";
+
 
 class SignupPage extends React.Component{
   constructor(props){
     super(props);
+    const firebaseDB = firebaseApplication.database();
+    this.userRef = firebaseDB.ref('users');
     this.state ={
         email : "",
         password : "",
@@ -15,8 +18,11 @@ class SignupPage extends React.Component{
     
   handleSignUp = () => {
     this.signUp();
-    Alert.alert(API_KEY);
 
+  }
+
+  hash = (password) => {
+    return bcrypt.hashSync(password, 10)
   }
 
   signUp  = async() => {
@@ -24,6 +30,10 @@ class SignupPage extends React.Component{
         if(this.state.email != "" && this.state.password != "" && this.state.confirmationPassword != ""){
           try{
             await firebaseApplication.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+            this.userRef.push({
+                email : this.state.email,
+                password : this.hash(this.state.password)
+            })
             console.log(this.state.email + " signed up");
             this.props.navigation.navigate("Login");
           }catch(err){

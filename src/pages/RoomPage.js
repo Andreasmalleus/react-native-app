@@ -1,13 +1,13 @@
-import React, { Children } from "react";
-import {StyleSheet, Alert} from "react-native";
+import React from "react";
+import {StyleSheet, Alert, Button} from "react-native";
 import {GiftedChat} from "react-native-gifted-chat";
 import firebaseApplication from "../components/firebaseConfig.js";
-import { cos } from "react-native-reanimated";
-class MessagePage extends React.Component{
+class RoomPage extends React.Component{
     constructor(props){
         super(props);
         const firebaseDB = firebaseApplication.database();
-        this.messageRef = firebaseDB.ref('messages');
+        this.room = this.props.navigation.state.params.roomKey;
+        this.messageRef = firebaseDB.ref(`rooms/${this.room}/messages`);
         this.state = {
             messages : [],
             user : [
@@ -15,13 +15,9 @@ class MessagePage extends React.Component{
             ]
         }
     }
-    static navigationOptions = ({ navigation }) => {
-
-        return {
-          title: navigation.getParam('author'),
-          
-        };
-    };
+    static navigationOptions = ({ navigation }) => ({
+        headerTintColor : "white"
+    })
 
     componentDidMount(){
         this.setState({
@@ -37,7 +33,7 @@ class MessagePage extends React.Component{
             snapshot.forEach((message) =>{
                 messageList = [
                     ({
-                        _id : message.key,
+                        _id : message.key, 
                         text : message.val().text,
                         createdAt : message.val().createdAt,
                         user : {
@@ -58,7 +54,6 @@ class MessagePage extends React.Component{
     }
 
     addMessages = (messages) =>{
-
         this.messageRef.push({
             text : messages[0].text,
             createdAt : Date.now(),
@@ -83,4 +78,4 @@ class MessagePage extends React.Component{
     }
 }
 
-export default MessagePage;
+export default RoomPage;

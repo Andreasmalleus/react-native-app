@@ -2,15 +2,16 @@ import React from "react";
 import {Text, View, Image, StyleSheet} from "react-native";
 
 
-class Message extends React.Component{
+class Room extends React.Component{
 
+    
     render(){
         return(
         <View style={styles.container}>
             <Image source={{uri : "https://placeimg.com/140/140/any"}} style={styles.userImg}></Image>
         <View style={styles.messageContainer}>
-            <Text style={styles.username} >{this.props.author}</Text>
-            <Text style={styles.lastmessage} >{this.props.message}</Text>
+            <Text style={styles.username} >{this.props.name}</Text>
+            <Text style={styles.lastmessage} >{this.props.roomKey}</Text>
         </View>
         </View>
         )
@@ -24,13 +25,11 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontWeight: "bold"
     },
-    
     lastmessage: {
         fontSize: 10,
         color: "gray",
         
     },
-    
     messageContainer: {
         flex: 1,
         flexDirection : "column",
@@ -49,4 +48,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default Message;
+export default Room;
